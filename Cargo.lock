@@ -318,3 +318,83 @@ name = "winnow"
 version = "0.7.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f3edebf492c8125044983378ecb5766203ad3b4c2f7a922bd7dd207f6d443e95"
+
+[[patch.unused]]
+name = "peg"
+version = "0.8.5"
+
+[[patch.unused]]
+name = "line-ending"
+version = "1.5.1"
+
+[[patch.unused]]
+name = "pura_lingua_binary"
+version = "0.1.0"
+
+[[patch.unused]]
+name = "pura_lingua_binary_proc_macros"
+version = "0.1.0"
+
+[[patch.unused]]
+name = "pura_lingua_cli"
+version = "0.1.0"
+
+[[patch.unused]]
+name = "pura_lingua_compile_service"
+version = "0.1.0"
+
+[[patch.unused]]
+name = "pura_lingua_compile_service_export"
+version = "0.1.0"
+
+[[patch.unused]]
+name = "pura_lingua_compiler_abstract_info"
+version = "0.1.0"
+
+[[patch.unused]]
+name = "pura_lingua_compiler_base"
+version = "0.1.0"
+
+[[patch.unused]]
+name = "pura_lingua_compiler_errors"
+version = "0.1.0"
+
+[[patch.unused]]
+name = "pura_lingua_compiler_manifest"
+version = "0.1.0"
+
+[[patch.unused]]
+name = "pura_lingua_compiler_shared"
+version = "0.1.0"
+
+[[patch.unused]]
+name = "pura_lingua_compiler_span"
+version = "0.1.0"
+
+[[patch.unused]]
+name = "pura_lingua_dynamic"
+version = "0.1.0"
+
+[[patch.unused]]
+name = "pura_lingua_global"
+version = "0.1.0"
+
+[[patch.unused]]
+name = "pura_lingua_proc_macros"
+version = "0.1.0"
+
+[[patch.unused]]
+name = "pura_lingua_runtime"
+version = "0.1.0"
+
+[[patch.unused]]
+name = "pura_lingua_runtime_export"
+version = "0.1.0"
+
+[[patch.unused]]
+name = "pura_lingua_vtables"
+version = "0.1.0"
+
+[[patch.unused]]
+name = "encoding_rs"
+version = "0.8.35"
