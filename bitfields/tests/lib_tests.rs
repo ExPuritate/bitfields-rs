@@ -1,4 +1,6 @@
 #![allow(clippy::unnecessary_cast)]
+#![feature(const_trait_impl)]
+#![feature(const_try)]
 
 #[cfg(test)]
 mod tests {

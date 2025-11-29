@@ -1,7 +1,7 @@
 error[E0277]: `Bitfield` doesn't implement `Debug`
-  --> tests/compile_error_cases/bitfield_disable_debug.rs:13:22
+  --> tests/compile_error_cases/bitfield_disable_debug.rs:16:22
    |
-13 |     println!("{:?}", bitfield);
+16 |     println!("{:?}", bitfield);
    |               ----   ^^^^^^^^ `Bitfield` cannot be formatted using `{:?}` because it doesn't implement `Debug`
    |               |
    |               required by this formatting parameter
@@ -11,6 +11,6 @@ error[E0277]: `Bitfield` doesn't implement `Debug`
    = note: this error originates in the macro `$crate::format_args_nl` which comes from the expansion of the macro `println` (in Nightly builds, run with -Z macro-backtrace for more info)
 help: consider annotating `Bitfield` with `#[derive(Debug)]`
    |
- 3 + #[derive(Debug)]
- 4 | #[bitfield(u64, debug = false)]
+ 6 + #[derive(Debug)]
+ 7 | #[bitfield(u64, debug = false)]
    |

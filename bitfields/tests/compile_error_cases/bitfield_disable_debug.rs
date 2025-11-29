@@ -1,3 +1,6 @@
+#![feature(const_trait_impl)]
+#![feature(const_try)]
+
 use bitfields::bitfield;
 
 #[bitfield(u64, debug = false)]

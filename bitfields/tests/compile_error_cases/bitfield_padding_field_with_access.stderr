@@ -1,5 +1,5 @@
 error: Padding fields can't have a specified access.
- --> tests/compile_error_cases/bitfield_padding_field_with_access.rs:5:7
+ --> tests/compile_error_cases/bitfield_padding_field_with_access.rs:8:7
   |
-5 |     #[bits(access = ro)]
+8 |     #[bits(access = ro)]
   |       ^^^^^^^^^^^^^^^^^

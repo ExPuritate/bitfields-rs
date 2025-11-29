@@ -1,3 +1,5 @@
+#![feature(const_trait_impl)]
+#![feature(const_try)]
 
 use bitfields::bitfield;
 
@@ -9,4 +11,4 @@ struct Reg {
     d: u8,
 }
 
-fn main() { }
+fn main() {}

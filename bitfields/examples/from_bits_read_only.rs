@@ -1,6 +1,8 @@
 // TODO: There is a linting issue with clippy that causes false positives in
 // this file.
 #![allow(clippy::all)]
+#![feature(const_trait_impl)]
+#![feature(const_try)]
 
 use bitfields::bitfield;
 

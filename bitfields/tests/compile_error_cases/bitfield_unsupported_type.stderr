@@ -1,9 +1,9 @@
 error: The 'bitfield' attribute must have an unsigned integer type as its first argument.
- --> tests/compile_error_cases/bitfield_unsupported_type.rs:4:1
-  |
-4 | / pub struct Bitfield {
-5 | |     a: u8,
-6 | |     b: u8,
-7 | |     c: u8,
-8 | | }
-  | |_^
+  --> tests/compile_error_cases/bitfield_unsupported_type.rs:7:1
+   |
+ 7 | / pub struct Bitfield {
+ 8 | |     a: u8,
+ 9 | |     b: u8,
+10 | |     c: u8,
+11 | | }
+   | |_^
