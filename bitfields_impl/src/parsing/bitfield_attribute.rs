@@ -3,7 +3,6 @@ use std::str::FromStr;
 use syn::Token;
 use syn::parse::{Parse, ParseStream};
 
-use crate::parsing::types::{get_bits_from_type, is_supported_bitfield_type};
 use crate::{IntegerType, create_syn_error};
 
 /// Represents the `#[bitfield]` attribute.

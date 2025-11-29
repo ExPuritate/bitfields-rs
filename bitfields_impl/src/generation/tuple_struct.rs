@@ -1,6 +1,6 @@
 use proc_macro2::{Ident, TokenStream};
 use quote::quote;
-use syn::{Type, Visibility};
+use syn::Visibility;
 
 use crate::parsing::bitfield_field::BitfieldField;
 

@@ -3,7 +3,7 @@ use proc_macro2::Span;
 use crate::create_syn_error;
 use crate::generation::common::PANIC_ERROR_MESSAGE;
 use crate::parsing::types::IntegerType::{
-    Bool, I8, I16, I32, I64, I128, Isize, U8, U16, U32, U64, U128, UnknownInteger, Usize,
+    Bool, I8, I16, I32, I64, I128, Isize, U8, U16, U32, U64, U128, Usize,
 };
 
 #[derive(Debug)]
@@ -110,6 +110,7 @@ pub(crate) fn get_integer_suffix_from_integer_type(
 }
 
 /// Returns if the type is a supported bitfield type.
+#[allow(unused)]
 pub(crate) fn is_supported_bitfield_type(ty: &syn::Type) -> bool {
     SUPPORTED_BITFIELD_TYPES.contains(&get_integer_type_from_type(ty))
 }
@@ -184,10 +185,10 @@ pub(crate) fn is_custom_field_type(ty: &syn::Type) -> bool {
 
 /// Returns the identifier of the type.
 pub(crate) fn get_type_ident(ty: &syn::Type) -> Option<String> {
-    if let syn::Type::Path(ty) = ty {
-        if let Some(segment) = ty.path.segments.first() {
-            return Some(segment.ident.to_string());
-        }
+    if let syn::Type::Path(ty) = ty
+        && let Some(segment) = ty.path.segments.first()
+    {
+        return Some(segment.ident.to_string());
     }
 
     None
