@@ -320,10 +320,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f3edebf492c8125044983378ecb5766203ad3b4c2f7a922bd7dd207f6d443e95"
 
 [[patch.unused]]
-name = "peg"
-version = "0.8.5"
-
-[[patch.unused]]
 name = "line-ending"
 version = "1.5.1"
 
@@ -398,3 +394,7 @@ version = "0.1.0"
 [[patch.unused]]
 name = "encoding_rs"
 version = "0.8.35"
+
+[[patch.unused]]
+name = "peg"
+version = "0.8.5"

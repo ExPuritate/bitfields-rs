@@ -3,14 +3,14 @@ use std::str::FromStr;
 use syn::Token;
 use syn::parse::{Parse, ParseStream};
 
-use crate::create_syn_error;
 use crate::parsing::types::{get_bits_from_type, is_supported_bitfield_type};
+use crate::{IntegerType, create_syn_error};
 
 /// Represents the `#[bitfield]` attribute.
 #[derive(Clone)]
 pub(crate) struct BitfieldAttribute {
     /// The integer type of the bitfield.
-    pub(crate) ty: syn::Type,
+    pub(crate) ty: syn::Ident,
     /// The number of bits of the bitfield.
     pub(crate) bits: u8,
     /// The order of the bits in the bitfield.
@@ -104,14 +104,16 @@ impl Parse for BitfieldAttribute {
             }
         };
 
-        if !is_supported_bitfield_type(&ty) {
+        let integer_type = IntegerType::parse_from_syn_ident(&ty);
+
+        if !integer_type.is_supported_bitfield_type() {
             return Err(create_syn_error(
                 input.span(),
                 "The 'bitfield' attribute must have an unsigned integer type as its first argument.",
             ));
         }
 
-        let bits = get_bits_from_type(&ty)?;
+        let bits = integer_type.get_bits()?;
 
         // Move to the next argument.
         if !input.is_empty() {

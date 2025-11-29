@@ -5,7 +5,11 @@ use syn::{Type, Visibility};
 use crate::parsing::bitfield_field::BitfieldField;
 
 /// Generates the tokens for the bitfield tuple struct.
-pub(crate) fn generate_tuple_struct_tokens(name: Ident, vis: Visibility, ty: Type) -> TokenStream {
+pub(crate) fn generate_tuple_struct_tokens(
+    name: Ident,
+    vis: Visibility,
+    ty: &syn::Ident,
+) -> TokenStream {
     let documentation = "Represents a bitfield.";
     quote! {
         #[doc = #documentation]
@@ -17,7 +21,7 @@ pub(crate) fn generate_tuple_struct_tokens(name: Ident, vis: Visibility, ty: Typ
 pub(crate) fn generate_struct_with_fields_tokens(
     name: Ident,
     vis: Visibility,
-    ty: Type,
+    ty: syn::Ident,
     ignored_fields: &[BitfieldField],
 ) -> TokenStream {
     let field_tokens = ignored_fields.iter().map(|field| {

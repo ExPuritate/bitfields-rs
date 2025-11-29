@@ -1,7 +1,7 @@
 use proc_macro2::TokenStream;
 use quote::format_ident;
 use quote::quote;
-use syn::{Type, Visibility};
+use syn::Visibility;
 
 use crate::generation::common::{does_field_have_getter, does_field_have_setter};
 use crate::parsing::bitfield_attribute::{BitOrder, BitfieldAttribute};
@@ -60,12 +60,7 @@ pub(crate) fn generate_field_getters_functions_tokens(
         let neg_field_name_ident = format_ident!("neg_{}", field_name);
         let field_bits_const_ident = format_ident!("{}_BITS", field_name_uppercase);
         let field_offset_const_ident = format_ident!("{}_OFFSET", field_name_uppercase);
-        let vis = match field.vis {
-            Some(_) => {
-                field.vis.clone().unwrap()
-            }
-            None => default_vis.clone(),
-        };
+        let vis = field.vis.as_ref().unwrap_or(&default_vis);
 
         let struct_val_ident = if ignored_fields_struct {
             quote! { self.val }
@@ -213,12 +208,7 @@ pub(crate) fn generate_field_setters_functions_tokens(
 
         let field_offset_setter_ident = format_ident!("set_{}", field_name);
         let checked_field_offset_setter_ident = format_ident!("checked_set_{}", field_name);
-        let vis = match field.vis {
-            Some(_) => {
-                field.vis.clone().unwrap()
-            }
-            None => default_vis.clone(),
-        };
+        let vis = field.vis.as_ref().unwrap_or(&default_vis);
 
         let setter_impl_tokens = generate_setter_impl_tokens(bitfield_type, field.clone(), None, quote! { bits }, false, ignored_fields_struct, None);
         let setter_with_size_check_impl_tokens = generate_setter_impl_tokens(bitfield_type, field.clone(), None, quote! { bits }, true, ignored_fields_struct, None);
@@ -253,7 +243,7 @@ pub(crate) fn generate_field_setters_functions_tokens(
 
 /// Helper function to generate the setter implementation tokens.
 pub(crate) fn generate_setter_impl_tokens(
-    bitfield_type: &Type,
+    bitfield_type: &syn::Ident,
     field: BitfieldField,
     bitfield_struct_name: Option<TokenStream>,
     value_ident: TokenStream,

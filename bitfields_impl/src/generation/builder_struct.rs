@@ -12,7 +12,7 @@ use crate::parsing::bitfield_field::{BitfieldField, FieldAccess};
 /// Generates the builder implementation.
 pub(crate) fn generate_builder_tokens(
     vis: Visibility,
-    bitfield_type: &syn::Type,
+    bitfield_type: &syn::Ident,
     bitfield_struct_name: Ident,
     fields: &[BitfieldField],
     ignored_fields: &[BitfieldField],

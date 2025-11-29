@@ -18,7 +18,7 @@ pub(crate) fn generate_new_function_tokens(
     vis: Visibility,
     fields: &[BitfieldField],
     ignored_fields: &[BitfieldField],
-    bitfield_type: &syn::Type,
+    bitfield_type: &syn::Ident,
 ) -> TokenStream {
     let setting_fields_default_values_tokens = generate_setting_fields_default_values_tokens(
         bitfield_type,
@@ -73,7 +73,7 @@ pub(crate) fn generate_new_without_defaults_function_tokens(
     vis: Visibility,
     fields: &[BitfieldField],
     ignored_fields: &[BitfieldField],
-    bitfield_type: &syn::Type,
+    bitfield_type: &syn::Ident,
 ) -> TokenStream {
     let setting_fields_to_zero_tokens = generate_setting_fields_to_zero_tokens(
         bitfield_type,

@@ -11,7 +11,7 @@ pub(crate) fn generate_from_bits_function_tokens(
     vis: Visibility,
     fields: &[BitfieldField],
     ignored_fields: &[BitfieldField],
-    bitfield_type: &syn::Type,
+    bitfield_type: &syn::Ident,
     bitfield_attribute: &BitfieldAttribute,
 ) -> TokenStream {
     let setting_fields_from_bits_tokens = generate_setting_fields_from_bits_tokens(
@@ -67,7 +67,7 @@ pub(crate) fn generate_from_bits_function_tokens(
 pub(crate) fn generate_from_bits_with_defaults_function_tokens(
     vis: Visibility,
     fields: &[BitfieldField],
-    bitfield_type: &syn::Type,
+    bitfield_type: &syn::Ident,
     bitfield_attribute: &BitfieldAttribute,
     ignored_fields_struct: bool,
 ) -> TokenStream {

@@ -1,3 +1,8 @@
+#![feature(derive_const)]
+#![feature(const_cmp)]
+#![feature(const_trait_impl)]
+#![feature(const_slice_make_iter)]
+
 mod generation;
 mod parsing;
 
@@ -41,7 +46,7 @@ use crate::parsing::bitfield_attribute::{BitOrder, BitfieldAttribute};
 use crate::parsing::bitfield_field::{BitfieldField, BitsAttribute, FieldAccess, FieldType};
 use crate::parsing::number_parser::{NumberParseError, ParsedNumber, parse_number_string};
 use crate::parsing::types::{
-    IntegerType, get_bits_from_type, get_integer_suffix_from_integer_type,
+    IntegerType, get_bits_from_ident, get_bits_from_type, get_integer_suffix_from_integer_type,
     get_integer_type_from_type, get_type_ident, is_custom_field_type, is_size_type,
     is_supported_field_type, is_unsigned_integer_type,
 };
@@ -100,9 +105,7 @@ fn check_bitfield_type_contain_field_bits(
             bitfield_attribute.ty.span(),
             format!(
                 "The total number of bits of the fields ({} bits) is greater than the number of bits of the bitfield type '{}' ({} bits).",
-                total_field_bits,
-                get_type_ident(&bitfield_attribute.ty).unwrap(),
-                bitfield_attribute.bits
+                total_field_bits, bitfield_attribute.ty, bitfield_attribute.bits
             ),
         )),
         Ordering::Less => {
@@ -112,7 +115,7 @@ fn check_bitfield_type_contain_field_bits(
                 format!(
                     "The total number of bits of the fields ({} bits) is less than the number of bits of the bitfield type '{}' ({} bits), you can add a padding field (prefixed with '_') to fill the remaining '{} bits'.",
                     total_field_bits,
-                    get_type_ident(&bitfield_attribute.ty).unwrap(),
+                    bitfield_attribute.ty,
                     bitfield_attribute.bits,
                     remaining_bits,
                 ),
@@ -200,8 +203,12 @@ fn do_parse_field(
         FieldType::IntegerFieldType
     };
 
-    let padding =
-        field_tokens.ident.clone().unwrap().to_string().starts_with(PADDING_FIELD_NAME_PREFIX);
+    let padding = field_tokens
+        .ident
+        .clone()
+        .ok_or_else(|| create_syn_error(field_tokens.span(), "Cannot generate for unnamed fields"))?
+        .to_string()
+        .starts_with(PADDING_FIELD_NAME_PREFIX);
 
     let bitfield = if let Some(field_bit_attribute) = field_bit_attribute {
         let Meta::List(bit_attribute_tokens) = &field_bit_attribute.meta else {
@@ -223,7 +230,7 @@ fn do_parse_field(
                 unsigned: false,
                 padding,
                 access: FieldAccess::ReadOnly,
-                name: field_tokens.ident.unwrap(),
+                name: field_tokens.ident.unwrap(), // Name has been checked
                 ignore: true,
                 field_type,
             });
@@ -234,7 +241,7 @@ fn do_parse_field(
                 field_tokens.span(),
                 format!(
                     "The field type {:?} is not supported.",
-                    get_type_ident(&field_tokens.ty).unwrap()
+                    get_type_ident(&field_tokens.ty).unwrap_or("<UNKNOWN_TYPE>".to_owned())
                 ),
             ));
         }
@@ -250,7 +257,7 @@ fn do_parse_field(
                         bit_attribute_tokens.span(),
                         format!(
                             "The field type {:?} ({} bits) is too small to hold the specified '{} bits'.",
-                            get_type_ident(&field_tokens.ty).unwrap(),
+                            get_type_ident(&field_tokens.ty).unwrap_or("<UNKNOWN_TYPE>".to_owned()),
                             get_bits_from_type(&field_tokens.ty)?,
                             bits
                         ),
@@ -283,13 +290,9 @@ fn do_parse_field(
         // to be parsed, let's take a chance and see if the user is trying to
         // use a const variable or a const function.
         let parsed_number = if field_type == FieldType::IntegerFieldType
-            && bits_attribute.clone().default_value_expr.is_some()
+            && let Some(default_value_expr) = &bits_attribute.default_value_expr
         {
-            check_default_value_fit_in_field(
-                &bits_attribute.clone().default_value_expr.unwrap(),
-                bits,
-                field_tokens.ty.clone(),
-            )?
+            check_default_value_fit_in_field(default_value_expr, bits, field_tokens.ty.clone())?
         } else {
             None
         };
@@ -321,8 +324,7 @@ fn do_parse_field(
                 // Rust will know the type of the number and will cast it.
                 if unsigned
                     || field_type != FieldType::IntegerFieldType
-                    || parsed_number.is_none()
-                    || parsed_number.unwrap().has_integer_suffix
+                    || parsed_number.is_none_or(|x| x.has_integer_suffix)
                 {
                     Some(quote! {
                         #expr
@@ -339,7 +341,7 @@ fn do_parse_field(
         };
 
         BitfieldField {
-            name: field_tokens.ident.unwrap(),
+            name: field_tokens.ident.unwrap(), // Checked
             ty: field_tokens.ty.clone(),
             vis: visibility,
             bits,
@@ -357,7 +359,7 @@ fn do_parse_field(
                 field_tokens.span(),
                 format!(
                     "The field type {:?} is not supported.",
-                    get_type_ident(&field_tokens.ty).unwrap()
+                    get_type_ident(&field_tokens.ty).unwrap_or("<UNKNOWN_TYPE>".to_owned())
                 ),
             ));
         }
@@ -528,7 +530,7 @@ fn calculate_field_offset(
     match bitfield_attribute.bit_order {
         BitOrder::Lsb => Ok(offset),
         BitOrder::Msb => {
-            let bitfield_type_bits = get_bits_from_type(&bitfield_attribute.ty)?;
+            let bitfield_type_bits = get_bits_from_ident(&bitfield_attribute.ty)?;
             // We calculate offset starting from the left. There's a chance that
             // the total bits of all fields is greater than the number of bits
             // of the bitfield type. We will catch it later so
@@ -613,7 +615,7 @@ fn generate_functions(
         generate_tuple_struct_tokens(
             struct_name.clone(),
             struct_tokens.vis.clone(),
-            bitfield_attribute.ty.clone(),
+            &bitfield_attribute.ty,
         )
     };
     let new_function = bitfield_attribute.generate_new_func.then(|| {

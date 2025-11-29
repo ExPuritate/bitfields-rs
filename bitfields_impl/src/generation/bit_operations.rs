@@ -3,16 +3,16 @@ use quote::quote;
 use syn::Visibility;
 
 use crate::generation::common::{does_field_have_getter, does_field_have_setter};
+use crate::get_bits_from_ident;
 use crate::parsing::bitfield_field::BitfieldField;
-use crate::parsing::types::get_bits_from_type;
 
 pub(crate) fn generate_get_bit_tokens(
     vis: Visibility,
-    bitfield_type: &syn::Type,
+    bitfield_type: &syn::Ident,
     fields: &[BitfieldField],
     ignored_fields_struct: bool,
 ) -> TokenStream {
-    let bitfield_type_bits = get_bits_from_type(bitfield_type).unwrap() as usize;
+    let bitfield_type_bits = get_bits_from_ident(bitfield_type).unwrap() as usize;
     let get_bit_documentation = "Returns a bit from the given index. Returns false for out-of-bounds and fields without read access.".to_string();
     let checked_get_bit_documentation = "Returns a bit from the given index. Returns an error for out-of-bounds and fields without read access.".to_string();
 
@@ -77,11 +77,11 @@ pub(crate) fn generate_get_bit_tokens(
 
 pub(crate) fn generate_set_bit_tokens(
     vis: Visibility,
-    bitfield_type: &syn::Type,
+    bitfield_type: &syn::Ident,
     fields: &[BitfieldField],
     ignored_fields_struct: bool,
 ) -> TokenStream {
-    let bitfield_type_bits = get_bits_from_type(bitfield_type).unwrap() as usize;
+    let bitfield_type_bits = get_bits_from_ident(bitfield_type).unwrap() as usize;
     let set_bit_documentation = "Sets a bit at given index with the given value. Is no-op for out-of-bounds and fields without write access.".to_string();
     let checked_set_bit_documentation = "Sets a bit at given index with the given value. Returns an error for out-of-bounds and fields without write access.".to_string();
 

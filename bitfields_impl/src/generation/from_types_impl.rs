@@ -10,7 +10,7 @@ pub(crate) fn generate_from_bitfield_type_for_bitfield_implementation_tokens(
     bitfield_struct_name: Ident,
     fields: &[BitfieldField],
     ignored_fields: &[BitfieldField],
-    bitfield_type: &syn::Type,
+    bitfield_type: &syn::Ident,
 ) -> TokenStream {
     let setting_fields_from_bits_tokens = generate_setting_fields_from_bits_tokens(
         bitfield_type,

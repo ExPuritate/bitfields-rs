@@ -14,7 +14,7 @@ pub(crate) const PANIC_ERROR_MESSAGE: &str = "A major unexpected error has occur
 /// By default, it uses the field's setter method. If the field is read-only,
 /// then it inlines bitwise operations to set the field.
 pub(crate) fn generate_setting_fields_default_values_tokens(
-    bitfield_type: &syn::Type,
+    bitfield_type: &syn::Ident,
     fields: &[BitfieldField],
     const_reference_tokens: Option<TokenStream>,
     ignored_fields_struct: bool,
@@ -98,7 +98,7 @@ pub(crate) fn generate_setting_fields_default_values_tokens(
 
 /// Generates tokens to set the fields to zero.
 pub(crate) fn generate_setting_fields_to_zero_tokens(
-    bitfield_type: &syn::Type,
+    bitfield_type: &syn::Ident,
     fields: &[BitfieldField],
     const_reference_tokens: Option<TokenStream>,
     ignored_fields_struct: bool,
@@ -169,7 +169,7 @@ pub(crate) fn generate_setting_fields_to_zero_tokens(
 
 /// Generates tokens to set the fields from a `bits` variable.
 pub(crate) fn generate_setting_fields_from_bits_tokens(
-    bitfield_type: &syn::Type,
+    bitfield_type: &syn::Ident,
     fields: &[BitfieldField],
     const_reference_tokens: Option<TokenStream>,
     respect_defaults: bool,

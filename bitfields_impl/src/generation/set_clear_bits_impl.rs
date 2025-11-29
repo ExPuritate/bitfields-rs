@@ -10,7 +10,7 @@ use crate::parsing::bitfield_field::BitfieldField;
 pub(crate) fn generate_set_bits_function_tokens(
     vis: Visibility,
     fields: &[BitfieldField],
-    bitfield_type: &syn::Type,
+    bitfield_type: &syn::Ident,
     ignored_fields_struct: bool,
 ) -> TokenStream {
     let documentation = "Sets the writable bits of the bitfield.";
@@ -35,7 +35,7 @@ pub(crate) fn generate_set_bits_function_tokens(
 pub(crate) fn generate_set_bits_with_defaults_function_tokens(
     vis: Visibility,
     fields: &[BitfieldField],
-    bitfield_type: &syn::Type,
+    bitfield_type: &syn::Ident,
     ignored_fields_struct: bool,
 ) -> TokenStream {
     let documentation = "Sets the writable bits of the bitfield while respecting defaults.";
@@ -60,7 +60,7 @@ pub(crate) fn generate_set_bits_with_defaults_function_tokens(
 pub(crate) fn generate_clear_bits_function_tokens(
     vis: Visibility,
     fields: &[BitfieldField],
-    bitfield_type: &syn::Type,
+    bitfield_type: &syn::Ident,
     ignored_fields_struct: bool,
 ) -> TokenStream {
     let documentation = "Clears the writable bits of the bitfield.";
@@ -79,7 +79,7 @@ pub(crate) fn generate_clear_bits_function_tokens(
 pub(crate) fn generate_clear_bits_preserve_defaults_function_tokens(
     vis: Visibility,
     fields: &[BitfieldField],
-    bitfield_type: &syn::Type,
+    bitfield_type: &syn::Ident,
     ignored_fields_struct: bool,
 ) -> TokenStream {
     let documentation = "Clears the writable bits of the bitfield.";
