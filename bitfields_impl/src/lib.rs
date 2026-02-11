@@ -16,7 +16,7 @@ use syn::{Expr, ExprLit, ExprUnary, Fields, Lit, LitInt, Meta, Type, Visibility}
 
 use crate::generation::bit_operations::{generate_get_bit_tokens, generate_set_bit_tokens};
 use crate::generation::builder_struct::{generate_builder_tokens, generate_to_builder_tokens};
-use crate::generation::common::PANIC_ERROR_MESSAGE;
+use crate::generation::common::panic_error_msg;
 use crate::generation::debug_impl::generate_debug_implementation;
 use crate::generation::default_impl::generate_default_implementation_tokens;
 use crate::generation::field_const_getter_setter::{
@@ -500,7 +500,7 @@ fn check_default_value_fit_in_field(
                 parsed_number.number > i128::MAX as u128
             }
         }
-        _ => Err(create_syn_error(default_value_expr.span(), PANIC_ERROR_MESSAGE))?,
+        _ => Err(create_syn_error(default_value_expr.span(), panic_error_msg()))?,
     };
 
     if default_value_too_big_for_type {
@@ -559,7 +559,7 @@ fn add_integer_literals_to_expr(expr: &Expr, field_type: Type) -> syn::Result<To
 
             Expr::Lit(ExprLit { attrs: expr_lit.attrs, lit: new_lit.lit })
         } else {
-            Err(create_syn_error(expr.span(), PANIC_ERROR_MESSAGE))?
+            Err(create_syn_error(expr.span(), panic_error_msg()))?
         };
 
         Expr::Unary(ExprUnary { attrs, op, expr: Box::new(updated_expr) })
@@ -568,7 +568,7 @@ fn add_integer_literals_to_expr(expr: &Expr, field_type: Type) -> syn::Result<To
 
         Expr::Lit(ExprLit { attrs: expr_lit.clone().attrs, lit: new_lit.lit })
     } else {
-        Err(create_syn_error(expr.span(), PANIC_ERROR_MESSAGE))?
+        Err(create_syn_error(expr.span(), panic_error_msg()))?
     };
 
     Ok(quote! {
@@ -587,7 +587,7 @@ fn create_expr_lit_with_integer_suffix(lit: &ExprLit, field_type: Type) -> syn::
                 LitInt::new(&format!("{}{}", lit_int.token(), integer_suffix), lit_int.span());
             ExprLit { attrs: lit.attrs.clone(), lit: Lit::Int(new_lit_int) }
         }
-        _ => Err(create_syn_error(lit.span(), PANIC_ERROR_MESSAGE))?,
+        _ => Err(create_syn_error(lit.span(), panic_error_msg()))?,
     };
 
     Ok(new_lit)

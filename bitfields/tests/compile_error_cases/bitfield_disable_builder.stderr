@@ -1,5 +1,5 @@
 error[E0433]: failed to resolve: use of undeclared type `BitfieldBuilder`
-  --> tests/compile_error_cases/bitfield_disable_builder.rs:15:20
+  --> tests/compile_error_cases/bitfield_disable_builder.rs:16:20
    |
-15 |     let bitfield = BitfieldBuilder::new();
+16 |     let bitfield = BitfieldBuilder::new();
    |                    ^^^^^^^^^^^^^^^ use of undeclared type `BitfieldBuilder`

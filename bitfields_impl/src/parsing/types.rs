@@ -1,10 +1,9 @@
 use proc_macro2::Span;
 
-use crate::create_syn_error;
-use crate::generation::common::PANIC_ERROR_MESSAGE;
 use crate::parsing::types::IntegerType::{
     Bool, I8, I16, I32, I64, I128, Isize, U8, U16, U32, U64, U128, Usize,
 };
+use crate::{create_syn_error, panic_error_msg};
 
 #[derive(Debug)]
 #[derive_const(PartialEq, Eq)]
@@ -37,6 +36,7 @@ impl IntegerType {
             "u64" => Self::U64,
             "u128" => Self::U128,
             "usize" => Self::Usize,
+
             "i8" => Self::I8,
             "i16" => Self::I16,
             "i32" => Self::I32,
@@ -58,6 +58,7 @@ impl IntegerType {
             U64 => Ok("u64"),
             U128 => Ok("u128"),
             Usize => Ok("usize"),
+
             I8 => Ok("i8"),
             I16 => Ok("i16"),
             I32 => Ok("i32"),
@@ -65,7 +66,7 @@ impl IntegerType {
             I128 => Ok("i128"),
             Isize => Ok("isize"),
             Bool => Ok("bool"),
-            _ => Err(create_syn_error(Span::call_site(), PANIC_ERROR_MESSAGE))?,
+            _ => Err(create_syn_error(Span::call_site(), panic_error_msg()))?,
         }
     }
     pub const fn is_supported_bitfield_type(&self) -> bool {
@@ -85,7 +86,8 @@ impl IntegerType {
             Self::U32 | Self::I32 => Ok(32),
             Self::U64 | Self::I64 => Ok(64),
             Self::U128 | Self::I128 => Ok(128),
-            _ => Err(create_syn_error(Span::call_site(), PANIC_ERROR_MESSAGE)),
+            Self::Usize | Self::Isize => Ok((size_of::<usize>() as u8) * 8),
+            _ => Err(create_syn_error(Span::call_site(), panic_error_msg())),
         }
     }
 }
@@ -141,7 +143,7 @@ pub(crate) fn get_bits_from_type(ty: &syn::Type) -> syn::Result<u8> {
     #[track_caller]
     #[inline(always)]
     fn err() -> syn::Error {
-        create_syn_error(Span::call_site(), PANIC_ERROR_MESSAGE)
+        create_syn_error(Span::call_site(), panic_error_msg())
     }
     let ident = get_type_ident(ty).ok_or_else(err)?;
     match ident.as_str() {
@@ -151,6 +153,7 @@ pub(crate) fn get_bits_from_type(ty: &syn::Type) -> syn::Result<u8> {
         "u32" | "i32" => Ok(32),
         "u64" | "i64" => Ok(64),
         "u128" | "i128" => Ok(128),
+        "usize" | "isize" => Ok((size_of::<usize>() as u8) * 8),
         _ => Err(err()),
     }
 }
@@ -160,7 +163,7 @@ pub(crate) fn get_bits_from_ident(i: &syn::Ident) -> syn::Result<u8> {
     #[track_caller]
     #[inline(always)]
     fn err() -> syn::Error {
-        create_syn_error(Span::call_site(), PANIC_ERROR_MESSAGE)
+        create_syn_error(Span::call_site(), panic_error_msg())
     }
     match i.to_string().as_str() {
         "bool" => Ok(1),
@@ -169,6 +172,7 @@ pub(crate) fn get_bits_from_ident(i: &syn::Ident) -> syn::Result<u8> {
         "u32" | "i32" => Ok(32),
         "u64" | "i64" => Ok(64),
         "u128" | "i128" => Ok(128),
+        "usize" | "isize" => Ok((size_of::<usize>() as u8) * 8),
         _ => Err(err()),
     }
 }

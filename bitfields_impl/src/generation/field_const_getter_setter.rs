@@ -3,6 +3,7 @@ use quote::format_ident;
 use quote::quote;
 use syn::Visibility;
 
+use crate::generation::common::get_uppercase_ident;
 use crate::generation::common::{does_field_have_getter, does_field_have_setter};
 use crate::parsing::bitfield_attribute::{BitOrder, BitfieldAttribute};
 use crate::parsing::bitfield_field::{BitfieldField, FieldAccess, FieldType};
@@ -24,7 +25,7 @@ pub(crate) fn generate_field_constants_tokens(
         .map(|field| {
             let field_bits = field.bits as u32;
             let field_offset = field.offset as u32;
-            let field_name_upper = field.name.to_string().to_ascii_uppercase();
+            let field_name_upper = get_uppercase_ident(&field.name);
             let field_bits_const_ident = format_ident!("{}_BITS", field_name_upper);
             let field_offset_const_ident = format_ident!("{}_OFFSET", field_name_upper);
 
@@ -51,13 +52,12 @@ pub(crate) fn generate_field_getters_functions_tokens(
 ) -> syn::Result<TokenStream> {
     let tokens = fields.iter().filter(|field| !field.padding).filter(|field| does_field_have_getter(field)).map(|field| {
         let bitfield_type = &bitfield_attribute.ty;
-        let field_name = field.name.clone().to_string();
-        let field_name_uppercase = field.name.clone().to_string().to_ascii_uppercase();
+        let field_name = &field.name;
+        let field_name_uppercase = get_uppercase_ident(&field.name);
         let field_bits = field.bits;
         let field_type = field.ty.clone();
 
-        let field_name_ident = format_ident!("{}", field_name);
-        let neg_field_name_ident = format_ident!("neg_{}", field_name);
+        let neg_field_name_ident = format_ident!("neg_{}", &field.name);
         let field_bits_const_ident = format_ident!("{}_BITS", field_name_uppercase);
         let field_offset_const_ident = format_ident!("{}_OFFSET", field_name_uppercase);
         let vis = field.vis.as_ref().unwrap_or(&default_vis);
@@ -101,7 +101,7 @@ pub(crate) fn generate_field_getters_functions_tokens(
 
             quote! {
                 #[doc = #common_field_getter_documentation]
-                   #vis const fn #field_name_ident(&self) -> #field_type {
+                   #vis const fn #field_name(&self) -> #field_type {
                     let mask = #bitfield_type::MAX >> (#bitfield_type::BITS - Self::#field_bits_const_ident);
                     let this = ((#struct_val_ident >> Self::#field_offset_const_ident) & mask);
                     #field_type::from_bits(this as _)
@@ -131,7 +131,7 @@ pub(crate) fn generate_field_getters_functions_tokens(
 
                 return quote! {
                     #[doc = #bool_field_getter_documentation]
-                    #vis const fn #field_name_ident(&self) -> #field_type {
+                    #vis const fn #field_name(&self) -> #field_type {
                         let mask = #bitfield_type::MAX >> (#bitfield_type::BITS - Self::#field_bits_const_ident);
                         let this = ((#struct_val_ident >> Self::#field_offset_const_ident) & mask);
                         this != 0
@@ -176,7 +176,7 @@ pub(crate) fn generate_field_getters_functions_tokens(
 
             quote! {
                 #[doc = #field_getter_documentation]
-                #vis const fn #field_name_ident(&self) -> #field_type {
+                #vis const fn #field_name(&self) -> #field_type {
                     let mask = #bitfield_type::MAX >> (#bitfield_type::BITS - Self::#field_bits_const_ident);
                     let this = ((#struct_val_ident >> Self::#field_offset_const_ident) & mask) as #field_type;
                     #sign_extend_tokens
@@ -199,7 +199,7 @@ pub(crate) fn generate_field_setters_functions_tokens(
     ignored_fields_struct: bool,
 ) -> TokenStream {
     fields.iter().filter(|field| !field.padding).filter(|field| does_field_have_setter(field)).map(|field| {
-        let field_name = field.name.clone().to_string();
+        let field_name = &field.name;
         let field_type = field.ty.clone();
         let bitfield_type = &bitfield_attribute.ty;
 
@@ -262,7 +262,7 @@ pub(crate) fn generate_setter_impl_tokens(
             }
         });
 
-    let field_name_uppercase = field.name.clone().to_string().to_ascii_uppercase();
+    let field_name_uppercase = get_uppercase_ident(&field.name);
     let field_bits_const_ident = format_ident!("{}_BITS", field_name_uppercase);
     let field_offset_const_ident = format_ident!("{}_OFFSET", field_name_uppercase);
     let bitfield_struct_name_ident = bitfield_struct_name.unwrap_or_else(|| quote! { Self });

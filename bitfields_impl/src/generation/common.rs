@@ -8,6 +8,11 @@ use crate::parsing::types::{IntegerType, get_integer_type_from_type};
 /// An error message to display when a panic occurs, which should never happen.
 pub(crate) const PANIC_ERROR_MESSAGE: &str = "A major unexpected error has occurred. If possible, please file an issue with the code that caused this error at https://github.com/gregorygaines/bitfields-rs/issues.";
 
+#[track_caller]
+pub(crate) fn panic_error_msg() -> String {
+    format!("{PANIC_ERROR_MESSAGE} at {}", std::panic::Location::caller())
+}
+
 /// Generates tokens to set the default values for non-padding fields or zero if
 /// no default value is provided.
 ///
@@ -196,18 +201,17 @@ pub(crate) fn generate_setting_fields_from_bits_tokens(
                 );
             }
 
-            let field_name = field.name.clone();
             let field_type_ident = field.ty.clone();
 
             let field_integer_type = get_integer_type_from_type(&field.ty);
 
             let field_has_setter = does_field_have_setter(field);
             if field_has_setter {
-                let field_name_uppercase = field.name.clone().to_string().to_ascii_uppercase();
+                let field_name_uppercase = get_uppercase_ident(&field.name);
                 let field_bits_const_ident = format_ident!("{}_BITS", field_name_uppercase);
                 let field_offset_const_ident = format_ident!("{}_OFFSET", field_name_uppercase);
                 let default_value = field.default_value_tokens.clone();
-                let field_offset_setter_ident = format_ident!("set_{}", field_name);
+                let field_offset_setter_ident = format_ident!("set_{}", &field.name);
 
                 if default_value.is_some() && respect_defaults {
                     return generate_setting_fields_default_values_tokens(
@@ -303,4 +307,14 @@ pub(crate) fn does_field_have_setter(field: &BitfieldField) -> bool {
 pub(crate) fn does_field_have_getter(field: &BitfieldField) -> bool {
     (field.access == FieldAccess::ReadWrite || field.access == FieldAccess::ReadOnly)
         && !field.padding
+}
+
+pub(crate) fn get_uppercase_ident(id: &syn::Ident) -> syn::Ident {
+    let mut s = id.to_string();
+    s.make_ascii_uppercase();
+    if let Some(s) = s.strip_prefix("R#") {
+        syn::Ident::new_raw(s, id.span())
+    } else {
+        syn::Ident::new(&s, id.span())
+    }
 }

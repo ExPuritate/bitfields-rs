@@ -15,3 +15,7 @@ bitfields-impl = { path = "../bitfields_impl", version = "1.0.2" }
 
 [dev-dependencies]
 trybuild = "1.0.113"
+
+[features]
+default = ["std"]
+std = []

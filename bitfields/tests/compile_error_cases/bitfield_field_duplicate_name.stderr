@@ -1,5 +1,5 @@
 error: The field name 'a' is duplicated, each field must have a unique name.
- --> tests/compile_error_cases/bitfield_field_duplicate_name.rs:9:5
-  |
-9 |     a: u8,
-  |     ^
+  --> tests/compile_error_cases/bitfield_field_duplicate_name.rs:10:5
+   |
+10 |     a: u8,
+   |     ^

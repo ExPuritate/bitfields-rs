@@ -1,6 +1,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![feature(const_trait_impl)]
 #![feature(const_try)]
+#![feature(derive_const)]
+#![feature(const_default)]
 
 #[cfg(test)]
 mod tests {
@@ -1903,7 +1905,8 @@ mod tests {
             _d: u8,
         }
 
-        #[derive(Debug, Default, PartialEq)]
+        #[derive(Debug, PartialEq)]
+        #[derive_const(Default)]
         enum Custom {
             #[default]
             A = 0,

@@ -1,5 +1,5 @@
 error: The default value '4095' is too large to fit into the specified '3 bits'.
- --> tests/compile_error_cases/bitfield_field_defined_bits_too_small_for_default_value.rs:8:25
+ --> tests/compile_error_cases/bitfield_field_defined_bits_too_small_for_default_value.rs:9:25
   |
-8 |     #[bits(3, default = 0xFFF)]
+9 |     #[bits(3, default = 0xFFF)]
   |                         ^^^^^

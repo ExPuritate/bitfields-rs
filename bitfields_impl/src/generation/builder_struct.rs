@@ -133,7 +133,7 @@ pub(crate) fn generate_builder_tokens(
             this: #bitfield_struct_name,
         }
 
-        impl Default for #builder_name {
+        impl const Default for #builder_name {
             fn default() -> Self {
                 let mut this = #initialize_struct_tokens;
                 #setting_fields_default_values_tokens
@@ -145,7 +145,7 @@ pub(crate) fn generate_builder_tokens(
 
         impl #builder_name {
             #[doc = "Creates a new bitfield builder instance."]
-            #vis fn new() -> Self {
+            #vis const fn new() -> Self {
                 let mut this = #initialize_struct_tokens;
                 #setting_fields_default_values_tokens
                 Self {
@@ -154,7 +154,7 @@ pub(crate) fn generate_builder_tokens(
             }
 
             #[doc = "Creates a new bitfield builder instance without setting any default values."]
-            #vis fn new_without_defaults() -> Self {
+            #vis const fn new_without_defaults() -> Self {
                 let mut this = #initialize_struct_tokens;
                 #setting_fields_to_zero_tokens
                 Self {
@@ -165,7 +165,7 @@ pub(crate) fn generate_builder_tokens(
            #( #builder_setter_tokens )*
 
             #[doc = "Builds a bitfield instance from the builder."]
-            #vis fn build(self) -> #bitfield_struct_name {
+            #vis const fn build(self) -> #bitfield_struct_name {
                 self.this
             }
         }
